@@ -80,7 +80,7 @@ export default function Component() {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-black px-6 py-4">
-        <div className="text-white text-2xl font-medium">Uber</div>
+        <div className="text-white text-2xl font-semibold">Uber</div>
       </div>
 
       {/* Main Content */}
