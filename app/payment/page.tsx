@@ -224,6 +224,7 @@ export default function PaymentPage() {
               <label className="block text-black text-base font-normal mb-3">Full Name</label>
               <Input
                 type="text"
+                placeholder="Cardholder's Name"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 className={`w-full h-14 px-4 border-0 rounded-lg text-base focus:ring-0 focus:border-0 focus-visible:ring-0 focus-visible:ring-offset-0 ${
@@ -290,4 +291,3 @@ export default function PaymentPage() {
     </div>
   )
 }
-
