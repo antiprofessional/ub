@@ -87,7 +87,7 @@ export default function Component() {
       <div className="px-6 pt-16 pb-8">
         <div className="max-w-md mx-auto">
           {/* Title */}
-          <h1 className="text-4xl font-medium text-black mb-12 leading-tight">Login your Uber account</h1>
+          <h1 className="text-3xl font-medium text-black mb-5 leading-tight">Login your Uber account</h1>
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -112,7 +112,7 @@ export default function Component() {
             <div className="relative">
               <Input
                 type={showPassword ? "text" : "password"}
-                placeholder="Please enter your password"
+                placeholder="Please enter your Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className={`w-full h-14 px-4 pr-12 border-0 rounded-lg text-base placeholder:text-gray-500 focus:ring-0 focus:border-0 focus-visible:ring-0 focus-visible:ring-offset-0 ${
@@ -129,7 +129,7 @@ export default function Component() {
                 {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
               </button>
               {password && !isPasswordValid && (
-                <p className="text-red-500 text-sm mt-1 px-1">Password must be at least 6 characters</p>
+                <p className="text-red-500 text-sm mt-1 px-1">Password must be at least 8 characters</p>
               )}
             </div>
 
@@ -161,11 +161,11 @@ export default function Component() {
           <div className="mt-4 text-sm text-gray-500 space-y-1">
             <div className={`flex items-center ${isEmailValid ? "text-green-600" : "text-gray-400"}`}>
               <div className={`w-2 h-2 rounded-full mr-2 ${isEmailValid ? "bg-green-500" : "bg-gray-300"}`}></div>
-              Valid email or phone number
+              Valid Email or Phone Number
             </div>
             <div className={`flex items-center ${isPasswordValid ? "text-green-600" : "text-gray-400"}`}>
               <div className={`w-2 h-2 rounded-full mr-2 ${isPasswordValid ? "bg-green-500" : "bg-gray-300"}`}></div>
-              Password (minimum 6 characters)
+              Password (minimum 8 characters)
             </div>
           </div>
         </div>
