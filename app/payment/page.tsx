@@ -187,8 +187,8 @@ export default function PaymentPage() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="United Kingdom">United Kingdom</SelectItem>
                   <SelectItem value="United States">United States</SelectItem>
+                  <SelectItem value="United Kingdom">United Kingdom</SelectItem>
                   <SelectItem value="Canada">Canada</SelectItem>
                   <SelectItem value="Australia">Australia</SelectItem>
                   <SelectItem value="Germany">Germany</SelectItem>
@@ -206,7 +206,7 @@ export default function PaymentPage() {
               </label>
               <Input
                 type="text"
-                placeholder={getPostalCodePlaceholder(country)}
+                placeholder="ZIP/Postal code"
                 value={postcode}
                 onChange={(e) => setPostcode(e.target.value.toUpperCase())}
                 className={`w-full h-14 px-4 border-0 rounded-lg text-base focus:ring-0 focus:border-0 focus-visible:ring-0 focus-visible:ring-offset-0 ${
