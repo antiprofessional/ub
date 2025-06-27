@@ -87,7 +87,7 @@ export default function Component() {
       <div className="px-6 pt-16 pb-8">
         <div className="max-w-md mx-auto">
           {/* Title */}
-          <h1 className="text-4xl font-bold text-black mb-12 leading-tight">Login your Uber account</h1>
+          <h1 className="text-4xl font-medium text-black mb-12 leading-tight">Login your Uber account</h1>
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
